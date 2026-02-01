@@ -26,9 +26,6 @@ type Props = {
   total: number;
   page: number;
   limit: number;
-  fileName?: string;
-  from?: string;
-  to?: string;
 };
 
 export default function ImportsPage({ items, page, limit, total }: Props) {
@@ -213,7 +210,7 @@ export default function ImportsPage({ items, page, limit, total }: Props) {
         {/* Pagination */}
         <div className="mt-6 flex items-center gap-4 bg-white p-4 rounded-lg shadow-md border border-indigo-100">
           {page > 1 && (
-            <a href={`?page=${page - 1}&limit=${currentLimit}${fileName ? `&fileName=${fileName}` : ''}${from ? `&from=${from}` : ''}${to ? `&to=${to}` : ''}`}>
+            <a href={`?page=${page - 1}&limit=${currentLimit}`}>
               <button className="px-4 py-2 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-indigo-400 font-medium transition-all">
                 ← Prev
               </button>
@@ -223,7 +220,7 @@ export default function ImportsPage({ items, page, limit, total }: Props) {
             Page {page}
           </div>
           {items.length === currentLimit && (
-            <a href={`?page=${page + 1}&limit=${currentLimit}${fileName ? `&fileName=${fileName}` : ''}${from ? `&from=${from}` : ''}${to ? `&to=${to}` : ''}`}>
+            <a href={`?page=${page + 1}&limit=${currentLimit}`}>
               <button className="px-4 py-2 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-indigo-400 font-medium transition-all">
                 Next →
               </button>
@@ -241,18 +238,12 @@ export default function ImportsPage({ items, page, limit, total }: Props) {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const page = Number((ctx.query.page as string) || '1');
   const limit = Number((ctx.query.limit as string) || '20');
-  const fileName = (ctx.query.fileName as string) || '';
-  const from = (ctx.query.from as string) || '';
-  const to = (ctx.query.to as string) || '';
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
   try {
     const params = new URLSearchParams();
     params.set('limit', String(limit));
     params.set('page', String(page));
-    if (fileName) params.set('fileName', fileName);
-    if (from) params.set('from', from);
-    if (to) params.set('to', to);
 
     const res = await fetch(`${API_URL}/imports?${params.toString()}`);
     const data = await res.json();
@@ -261,14 +252,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         items: data.items || [], 
         total: data.total || 0, 
         page, 
-        limit,
-        fileName,
-        from,
-        to
+        limit
       } 
     };
   } catch (err) {
-    return { props: { items: [], total: 0, page, limit, fileName, from, to } };
+    return { props: { items: [], total: 0, page, limit } };
   }
 };
 
