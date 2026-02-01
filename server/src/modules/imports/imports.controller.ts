@@ -26,9 +26,28 @@ export class ImportsController {
   @Post('start')
   async startImport() {
     // Fire-and-forget: Start the process but respond immediately
-    this.fetcher.fetchFeeds().catch(err => {
-      console.error('Background fetch error:', err);
-    });
+    this.fetcher.fetchFeeds()
+      .then(async (results) => {
+        // Save import logs after fetching completes
+        for (const result of results) {
+          try {
+            await this.importsService.createLog({
+              fileName: result.fileName,
+              totalFetched: result.totalFetched || 0,
+              totalImported: result.totalFetched || 0,
+              newJobs: result.totalFetched || 0,
+              updatedJobs: 0,
+              failedJobs: result.error ? 1 : 0,
+              createdAt: new Date(),
+            });
+          } catch (err) {
+            console.error('Failed to create import log:', err);
+          }
+        }
+      })
+      .catch(err => {
+        console.error('Background fetch error:', err);
+      });
     
     return { 
       message: 'Import started', 
@@ -42,9 +61,28 @@ export class ImportsController {
     const url = body?.url;
     
     // Fire-and-forget: Start the process but respond immediately
-    this.fetcher.fetchFeeds(url).catch(err => {
-      console.error('Background fetch error for URL:', url, err);
-    });
+    this.fetcher.fetchFeeds(url)
+      .then(async (results) => {
+        // Save import logs after fetching completes
+        for (const result of results) {
+          try {
+            await this.importsService.createLog({
+              fileName: result.fileName,
+              totalFetched: result.totalFetched || 0,
+              totalImported: result.totalFetched || 0,
+              newJobs: result.totalFetched || 0,
+              updatedJobs: 0,
+              failedJobs: result.error ? 1 : 0,
+              createdAt: new Date(),
+            });
+          } catch (err) {
+            console.error('Failed to create import log:', err);
+          }
+        }
+      })
+      .catch(err => {
+        console.error('Background fetch error for URL:', url, err);
+      });
     
     return { 
       message: 'Import started for URL', 
