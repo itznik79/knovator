@@ -38,7 +38,6 @@ export class ImportsController {
               newJobs: result.totalFetched || 0,
               updatedJobs: 0,
               failedJobs: result.error ? 1 : 0,
-              createdAt: new Date(),
             });
           } catch (err) {
             console.error('Failed to create import log:', err);
@@ -73,7 +72,6 @@ export class ImportsController {
               newJobs: result.totalFetched || 0,
               updatedJobs: 0,
               failedJobs: result.error ? 1 : 0,
-              createdAt: new Date(),
             });
           } catch (err) {
             console.error('Failed to create import log:', err);
