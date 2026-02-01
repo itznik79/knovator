@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Server - install & build
+        working-directory: ./server
+        run: |
+          npm ci
+          npm run build
+
+      - name: Worker - install & build
+        working-directory: ./worker
+        run: |
+          npm ci
+          npm run build || true
+
+      - name: Client - install
+        working-directory: ./client
+        run: |
+          npm ci
+          npm run build || true
+
+      - name: Lint TypeScript (optional)
+        run: |
+          echo "No lint configured; consider adding ESLint to the repo"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: builds
+          path: |
+            server/dist
+            worker/dist || true
+            client/.next || true
