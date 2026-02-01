@@ -92,7 +92,7 @@ export default function ImportsPage({ items, page, limit, total }: Props) {
         </div>
 
         <h1 className="text-3xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-          Import History
+          Import History v2
         </h1>
 
         {/* Real-time Queue Stats */}
