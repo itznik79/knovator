@@ -25,15 +25,32 @@ export class ImportsController {
 
   @Post('start')
   async startImport() {
-    // Trigger feed fetch and enqueue (all feeds)
-    const result = await this.fetcher.fetchFeeds();
-    return { message: 'queued', result };
+    // Fire-and-forget: Start the process but respond immediately
+    this.fetcher.fetchFeeds().catch(err => {
+      console.error('Background fetch error:', err);
+    });
+    
+    return { 
+      message: 'Import started', 
+      status: 'processing',
+      timestamp: new Date().toISOString()
+    };
   }
 
   @Post('start/url')
   async startImportForUrl(@Body() body: StartUrlDto) {
     const url = body?.url;
-    const result = await this.fetcher.fetchFeeds(url);
-    return { message: 'queued', result };
+    
+    // Fire-and-forget: Start the process but respond immediately
+    this.fetcher.fetchFeeds(url).catch(err => {
+      console.error('Background fetch error for URL:', url, err);
+    });
+    
+    return { 
+      message: 'Import started for URL', 
+      url,
+      status: 'processing',
+      timestamp: new Date().toISOString()
+    };
   }
 }
