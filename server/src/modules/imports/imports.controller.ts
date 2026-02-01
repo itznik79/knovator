@@ -28,10 +28,12 @@ export class ImportsController {
     // Fire-and-forget: Start the process but respond immediately
     this.fetcher.fetchFeeds()
       .then(async (results) => {
+        console.log(`[ImportsController] Received ${results.length} results from fetchFeeds`);
         // Save import logs after fetching completes
         for (const result of results) {
           try {
-            await this.importsService.createLog({
+            console.log(`[ImportsController] Creating import log for ${result.fileName}`);
+            const log = await this.importsService.createLog({
               fileName: result.fileName,
               totalFetched: result.totalFetched || 0,
               totalImported: result.totalFetched || 0,
@@ -39,13 +41,15 @@ export class ImportsController {
               updatedJobs: 0,
               failedJobs: result.error ? 1 : 0,
             });
+            console.log(`[ImportsController] Created import log:`, log._id);
           } catch (err) {
-            console.error('Failed to create import log:', err);
+            console.error('[ImportsController] Failed to create import log:', err);
           }
         }
+        console.log(`[ImportsController] Finished creating all import logs`);
       })
       .catch(err => {
-        console.error('Background fetch error:', err);
+        console.error('[ImportsController] Background fetch error:', err);
       });
     
     return { 
@@ -62,10 +66,12 @@ export class ImportsController {
     // Fire-and-forget: Start the process but respond immediately
     this.fetcher.fetchFeeds(url)
       .then(async (results) => {
+        console.log(`[ImportsController] Received ${results.length} results from fetchFeeds for URL: ${url}`);
         // Save import logs after fetching completes
         for (const result of results) {
           try {
-            await this.importsService.createLog({
+            console.log(`[ImportsController] Creating import log for ${result.fileName}`);
+            const log = await this.importsService.createLog({
               fileName: result.fileName,
               totalFetched: result.totalFetched || 0,
               totalImported: result.totalFetched || 0,
@@ -73,13 +79,15 @@ export class ImportsController {
               updatedJobs: 0,
               failedJobs: result.error ? 1 : 0,
             });
+            console.log(`[ImportsController] Created import log:`, log._id);
           } catch (err) {
-            console.error('Failed to create import log:', err);
+            console.error('[ImportsController] Failed to create import log:', err);
           }
         }
+        console.log(`[ImportsController] Finished creating all import logs for URL`);
       })
       .catch(err => {
-        console.error('Background fetch error for URL:', url, err);
+        console.error('[ImportsController] Background fetch error for URL:', url, err);
       });
     
     return { 

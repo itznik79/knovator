@@ -31,10 +31,7 @@ type Props = {
   to?: string;
 };
 
-export default function ImportsPage({ items, page, limit, total, fileName, from, to }: Props) {
-  const [searchFileName, setSearchFileName] = useState(fileName || '');
-  const [dateFrom, setDateFrom] = useState(from || '');
-  const [dateTo, setDateTo] = useState(to || '');
+export default function ImportsPage({ items, page, limit, total }: Props) {
   const [mounted, setMounted] = useState(false);
   const [queueStats, setQueueStats] = useState<QueueStats | null>(null);
   const [currentLimit, setCurrentLimit] = useState(limit);
@@ -74,27 +71,10 @@ export default function ImportsPage({ items, page, limit, total, fileName, from,
     return new Date(dateString).toLocaleString();
   };
 
-  const handleFilter = () => {
-    const params = new URLSearchParams();
-    params.set('page', '1');
-    params.set('limit', String(currentLimit));
-    if (searchFileName) params.set('fileName', searchFileName);
-    if (dateFrom) params.set('from', dateFrom);
-    if (dateTo) params.set('to', dateTo);
-    window.location.href = `/imports?${params.toString()}`;
-  };
-
-  const handleClearFilter = () => {
-    window.location.href = '/imports';
-  };
-
   const handleLimitChange = (newLimit: number) => {
     const params = new URLSearchParams();
     params.set('page', '1');
     params.set('limit', String(newLimit));
-    if (searchFileName) params.set('fileName', searchFileName);
-    if (dateFrom) params.set('from', dateFrom);
-    if (dateTo) params.set('to', dateTo);
     window.location.href = `/imports?${params.toString()}`;
   };
 
@@ -149,55 +129,6 @@ export default function ImportsPage({ items, page, limit, total, fileName, from,
             </div>
           </div>
         )}
-
-        {/* Filters */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6 border border-indigo-100">
-          <h2 className="text-sm font-semibold mb-4 text-gray-700">Filters</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">File Name / URL</label>
-              <input
-                type="text"
-                value={searchFileName}
-                onChange={(e) => setSearchFileName(e.target.value)}
-                placeholder="Search by URL..."
-                className="w-full px-3 py-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">From Date</label>
-              <input
-                type="date"
-                value={dateFrom}
-                onChange={(e) => setDateFrom(e.target.value)}
-                className="w-full px-3 py-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">To Date</label>
-              <input
-                type="date"
-                value={dateTo}
-                onChange={(e) => setDateTo(e.target.value)}
-                className="w-full px-3 py-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-          <div className="mt-4 flex gap-2">
-            <button
-              onClick={handleFilter}
-              className="px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg text-sm hover:from-blue-700 hover:to-indigo-700 font-medium shadow-md transition-all"
-            >
-              Apply Filters
-            </button>
-            <button
-              onClick={handleClearFilter}
-              className="px-5 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300 font-medium transition-colors"
-            >
-              Clear
-            </button>
-          </div>
-        </div>
 
         {/* Items per page selector */}
         <div className="mb-4 flex items-center gap-3">
