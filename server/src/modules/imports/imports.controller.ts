@@ -25,6 +25,25 @@ export class ImportsController {
 
   @Post('start')
   async startImport() {
+    this.startImportProcess();
+    return { 
+      message: 'Import started', 
+      status: 'processing',
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  @Get('cron-trigger')
+  async cronTrigger() {
+    this.startImportProcess();
+    return {
+      message: 'Cron triggered import started',
+      status: 'processing',
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  private startImportProcess() {
     // Fire-and-forget: Start the process but respond immediately
     this.fetcher.fetchFeeds()
       .then(async (results) => {
@@ -51,12 +70,6 @@ export class ImportsController {
       .catch(err => {
         console.error('[ImportsController] Background fetch error:', err);
       });
-    
-    return { 
-      message: 'Import started', 
-      status: 'processing',
-      timestamp: new Date().toISOString()
-    };
   }
 
   @Post('start/url')
